@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="795e00db-ce9b-405b-bc9d-34682c1dbfb7" name="Changes" comment="The end" />
+    <list default="true" id="795e00db-ce9b-405b-bc9d-34682c1dbfb7" name="Changes" comment="The end1" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -86,12 +86,21 @@
       <option name="project" value="LOCAL" />
       <updated>1764291892880</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="The end1">
+      <option name="closed" value="true" />
+      <created>1764292440182</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1764292440182</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="The end" />
-    <option name="LAST_COMMIT_MESSAGE" value="The end" />
+    <MESSAGE value="The end1" />
+    <option name="LAST_COMMIT_MESSAGE" value="The end1" />
   </component>
 </project>
