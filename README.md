@@ -146,41 +146,41 @@
 
 ### 📁 СТРУКТУРА ПРОЕКТА
       ```text
-   booking_system/
-   ├── backend/                    # Серверная часть (Flask)
-   │   ├── app/
-   │   │   ├── routes/            # Маршруты API
-   │   │   │   ├── auth.py        # Аутентификация
-   │   │   │   ├── bookings.py    # Бронирования
-   │   │   │   ├── clients.py     # Клиенты
-   │   │   │   ├── reports.py     # Отчеты
-   │   │   │   └── settings.py    # Настройки
-   │   │   ├── utils/             # Вспомогательные функции
-   │   │   │   └── database.py    # Работа с БД
-   │   │   ├── middleware.py      # Промежуточное ПО
-   │   │   ├── models.py          # Модели данных SQLAlchemy
-   │   │   └── __init__.py        # Инициализация приложения
-   │   └── run.py                 # Точка входа сервера
-   ├── frontend/                  # Клиентская часть
-   │   ├── css/                  # Стили
-   │   │   ├── base.css          # Базовые стили
-   │   │   ├── components.css    # Компоненты
-   │   │   ├── layout.css        # Макет
-   │   │   └── modules.css       # Модули
-   │   ├── js/                   # JavaScript
-   │   │   ├── modules/          # Модули JS
-   │   │   │   ├── auth.js       # Аутентификация
-   │   │   │   ├── calendar.js   # Календарь
-   │   │   │   ├── clients.js    # Клиенты
-   │   │   │   ├── database.js   # Работа с БД
-   │   │   │   ├── reports.js    # Отчеты
-   │   │   │   └── utils.js      # Утилиты
-   │   │   └── main.js           # Главный скрипт
-   │   └── index.html            # Главная страница
-   ├── docs/                     # Документация
-   ├── dist/                     # Собранные файлы
-   ├── build/                    # Временные файлы сборки
-   └── logs/                     # Логи приложения
+      booking_system/
+      ├── backend/                    # Серверная часть (Flask)
+      │   ├── app/
+      │   │   ├── routes/            # Маршруты API
+      │   │   │   ├── auth.py        # Аутентификация
+      │   │   │   ├── bookings.py    # Бронирования
+      │   │   │   ├── clients.py     # Клиенты
+      │   │   │   ├── reports.py     # Отчеты
+      │   │   │   └── settings.py    # Настройки
+      │   │   ├── utils/             # Вспомогательные функции
+      │   │   │   └── database.py    # Работа с БД
+      │   │   ├── middleware.py      # Промежуточное ПО
+      │   │   ├── models.py          # Модели данных SQLAlchemy
+      │   │   └── __init__.py        # Инициализация приложения
+      │   └── run.py                 # Точка входа сервера
+      ├── frontend/                  # Клиентская часть
+      │   ├── css/                  # Стили
+      │   │   ├── base.css          # Базовые стили
+      │   │   ├── components.css    # Компоненты
+      │   │   ├── layout.css        # Макет
+      │   │   └── modules.css       # Модули
+      │   ├── js/                   # JavaScript
+      │   │   ├── modules/          # Модули JS
+      │   │   │   ├── auth.js       # Аутентификация
+      │   │   │   ├── calendar.js   # Календарь
+      │   │   │   ├── clients.js    # Клиенты
+      │   │   │   ├── database.js   # Работа с БД
+      │   │   │   ├── reports.js    # Отчеты
+      │   │   │   └── utils.js      # Утилиты
+      │   │   └── main.js           # Главный скрипт
+      │   └── index.html            # Главная страница
+      ├── docs/                     # Документация
+      ├── dist/                     # Собранные файлы
+      ├── build/                    # Временные файлы сборки
+      └── logs/                     # Логи приложения
 
 ### 🔧 API ENDPOINTS
 
