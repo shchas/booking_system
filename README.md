@@ -114,16 +114,16 @@
    source .venv/bin/activate  # Linux/Mac
 
 3. **Установите зависимости**
-    ```bash
-pip install -r requirements.txt
+   ```bash
+   pip install -r requirements.txt
 
 4. **Запустите приложение**
    ```bash
-cd backend
-python run.py
+   cd backend
+   python run.py
 
 5. **Откройте в браузере**
-```text
+   ```text
 http://127.0.0.1:5000
 
 ### СБОРКА В EXE ФАЙЛ
