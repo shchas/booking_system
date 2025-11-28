@@ -118,12 +118,12 @@
 pip install -r requirements.txt
 
 4. **Запустите приложение**
-    ```bash
+   ```bash
 cd backend
 python run.py
 
 5. **Откройте в браузере**
-    ```text
+```text
 http://127.0.0.1:5000
 
 ### СБОРКА В EXE ФАЙЛ
