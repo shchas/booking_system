@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модульная система бронирования</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/modules.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Экран авторизации (общий) -->
+        <div id="loginScreen" class="login-container">
+            <h1>Система бронирования</h1>
+            <p>Введите пароль для доступа к системе</p>
+            <div class="login-form">
+                <input type="password" id="passwordInput" placeholder="Пароль">
+                <button onclick="login()">Войти</button>
+            </div>
+        </div>
+
+        <!-- Основной интерфейс (общий) -->
+        <div id="mainInterface" style="display: none;">
+            
+            <!-- Шапка (общая) -->
+            <div class="header">
+                <h1 id="mainHeader">Расписание проката картинга</h1>
+                <div class="header-controls">
+                    <button class="logout-btn" onclick="logout()">Выйти</button>
+                </div>
+            </div>
+            
+            <!-- Навигация по модулям (новая) -->
+            <div class="module-nav">
+                <button id="navKarting" class="active" onclick="showModule('karting')">Картинг</button>
+                <button id="navVirtual" onclick="showModule('virtual')">Симулятор</button>
+                <button id="navLounge" onclick="showModule('lounge')">Лаундж зона</button>
+                <button id="navParty" onclick="showModule('party')">Аренда зала</button>
+            </div>
+
+            <!-- Контейнеры для видов (модулей) -->
+            
+            <!-- МОДУЛЬ 1: КАРТИНГ -->
+            <div id="kartingView" class="view-container active">
+                <div class="schedule-container">
+                    <!-- ВРЕМЕННЫЕ СЛОТЫ СЛЕВА -->
+                    <div class="time-slots-container">
+                        <h2>Выберите время:</h2>
+                        <div class="time-slots" id="timeSlots">
+                            <!-- Слоты генерируются JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- КАЛЕНДАРЬ СПРАВА -->
+                    <div class="calendar-sidebar">
+                        <div class="calendar" id="calendar">
+                            <!-- Календарь генерируется JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- МОДУЛЬ 2: АРЕНДА ЗАЛА -->
+            <div id="partyView" class="view-container">
+                <div class="schedule-container">
+                    <!-- ВРЕМЕННЫЕ СЛОТЫ СЛЕВА -->
+                    <div class="time-slots-container">
+                        <h2>Расписание зала:</h2>
+                        <div class="time-slots" id="partyTimeSlots">
+                            <!-- Слоты генерируются JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- КАЛЕНДАРЬ СПРАВА -->
+                    <div class="calendar-sidebar">
+                        <div class="calendar" id="partyCalendar">
+                            <!-- Календарь для зала -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- МОДУЛЬ 3: ЛАУНДЖ ЗОНА -->
+            <div id="loungeView" class="view-container">
+                <div class="schedule-container">
+                    <!-- ВРЕМЕННЫЕ СЛОТЫ СЛЕВА -->
+                    <div class="time-slots-container">
+                        <h2>Расписание лаундж зоны:</h2>
+                        <div class="time-slots" id="loungeTimeSlots">
+                            <!-- Слоты генерируются JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- КАЛЕНДАРЬ СПРАВА -->
+                    <div class="calendar-sidebar">
+                        <div class="calendar" id="loungeCalendar">
+                            <!-- Календарь для лаундж зоны -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- МОДУЛЬ 4: СИМУЛЯТОР -->
+            <div id="virtualView" class="view-container">
+                <div class="schedule-container">
+                    <!-- ВРЕМЕННЫЕ СЛОТЫ СЛЕВА -->
+                    <div class="time-slots-container">
+                        <h2>Выберите симулятор и время:</h2>
+                        <div class="time-slots" id="virtualTimeSlots">
+                            <!-- Слоты генерируются JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- КАЛЕНДАРЬ СПРАВА -->
+                    <div class="calendar-sidebar">
+                        <div class="calendar" id="virtualCalendar">
+                             <!-- Календарь для симуляторов -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Общая Админ-панель -->
+            <div class="admin-panel">
+                <div class="tabs">
+                    <button class="tab active" onclick="openTab(event, 'stats')">Статистика</button>
+                    <button class="tab" onclick="openTab(event, 'clients')">Клиенты</button>
+                    <button class="tab" onclick="openTab(event, 'settings')">Настройки</button>
+                    <button class="tab" onclick="openTab(event, 'reports')">Отчеты</button>
+                </div>
+
+                <!-- Вкладка: Статистика (Динамическая) -->
+                <div id="stats" class="tab-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="todayBookings">0</div>
+                            <div>Броней сегодня</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalClients">0</div>
+                            <div>Всего клиентов</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="todayRevenue">0 ₽</div>
+                            <div>Выручка сегодня</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="occupancyRate">0%</div>
+                            <div>Загрузка</div>
+                        </div>
+                    </div>
+
+                    <h3>Последние бронирования (для <span id="statsModuleType">картинга</span>)</h3>
+                    <div class="booking-list" id="recentBookings">
+                        <!-- Список генерируется JS -->
+                    </div>
+                </div>
+
+                <!-- Вкладка: Клиенты (Общая) -->
+                <div id="clients" class="tab-content">
+                    <h3>База клиентов</h3>
+                    <div class="client-search">
+                        <input type="text" id="clientSearchInput" placeholder="Поиск по ФИО или телефону">
+                        <button class="btn btn-primary" onclick="showTodayClients()">Клиенты на сегодня (все)</button>
+                        <button class="btn btn-info" onclick="showUpcomingBirthdays()">Ближайшие ДР</button>
+                    </div>
+                    <div class="booking-list" id="clientsList">
+                        <!-- Список генерируется JS -->
+                    </div>
+                </div>
+
+                <!-- Вкладка: Настройки (Новая, модульная) -->
+                <div id="settings" class="tab-content">
+                    <h3>Общие настройки</h3>
+                    
+                    <!-- Настройки Картинга -->
+                    <div class="form-group">
+                        <h4>Картинг</h4>
+                        <label>Время работы:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="time" id="kartingOpenTime">
+                            <span>до</span>
+                            <input type="time" id="kartingCloseTime">
+                        </div>
+                        <label>Длительность сеанса (минут):</label>
+                        <input type="number" id="kartingSessionDuration" min="15" step="15">
+                        
+                        <label>Максимальное количество картингов на слот:</label>
+                        <input type="number" id="kartingMaxKartsPerSlot" min="1" max="20">
+                        
+                        <h5>Стоимость за сеанс (будни / выходные)</h5>
+                        <div class="price-comparison">
+                            <div class="weekday-price">
+                                <label>Стоимость за сеанс (обычный режим) (₽):</label>
+                                <input type="number" id="kartingPriceRegular">
+                            </div>
+                            <div class="weekend-price">
+                                <label>Выходные (₽):</label>
+                                <input type="number" id="kartingPriceRegularWeekend">
+                            </div>
+                        </div>
+                        
+                        <div class="price-comparison">
+                            <div class="weekday-price">
+                                <label>Стоимость за сеанс (режим Race) (₽):</label>
+                                <input type="number" id="kartingPriceRace">
+                            </div>
+                            <div class="weekend-price">
+                                <label>Выходные (₽):</label>
+                                <input type="number" id="kartingPriceRaceWeekend">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Настройки Симулятора -->
+                    <div class="form-group">
+                        <h4>Симулятор</h4>
+                        <label>Время работы:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="time" id="virtualOpenTime">
+                            <span>до</span>
+                            <input type="time" id="virtualCloseTime">
+                        </div>
+                        <label>Базовый шаг расписания (минут):</label>
+                        <input type="number" id="virtualBaseDuration" min="15" step="15" value="15">
+                        
+                        <label>Количество симуляторов:</label>
+                        <input type="number" id="virtualMaxSimulators" min="1" max="20">
+                        
+                        <h5>Стоимость по длительностям (будни / выходные)</h5>
+                        <div class="duration-price-grid" id="virtualDurationPrices">
+                            <!-- Цены по длительностям генерируются JS -->
+                        </div>
+                    </div>
+
+                    <!-- Настройки Лаундж зоны -->
+                    <div class="form-group">
+                        <h4>Лаундж зона</h4>
+                        <label>Время работы:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="time" id="loungeOpenTime">
+                            <span>до</span>
+                            <input type="time" id="loungeCloseTime">
+                        </div>
+                        <label>Длительность сеанса (минут):</label>
+                        <input type="number" id="loungeSessionDuration" min="60" step="30">
+                        
+                        <h5>Стоимость за человека (будни / выходные)</h5>
+                        <div class="price-comparison">
+                            <div class="weekday-price">
+                                <label>Стоимость за 1 час (₽):</label>
+                                <input type="number" id="loungePrice1Hour">
+                            </div>
+                            <div class="weekend-price">
+                                <label>Выходные (₽):</label>
+                                <input type="number" id="loungePrice1HourWeekend">
+                            </div>
+                        </div>
+                        
+                        <div class="price-comparison">
+                            <div class="weekday-price">
+                                <label>Стоимость за 2 часа (₽):</label>
+                                <input type="number" id="loungePrice2Hours">
+                            </div>
+                            <div class="weekend-price">
+                                <label>Выходные (₽):</label>
+                                <input type="number" id="loungePrice2HoursWeekend">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Настройки Аренды зала -->
+                    <div class="form-group">
+                        <h4>Аренда зала</h4>
+                        <label>Время работы:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="time" id="partyOpenTime">
+                            <span>до</span>
+                            <input type="time" id="partyCloseTime">
+                        </div>
+                        <label>Длительность сеанса (минут):</label>
+                        <input type="number" id="partySessionDuration" min="60" step="30">
+                        
+                        <h5>Стоимость за человека (будни / выходные)</h5>
+                        <div class="price-comparison">
+                            <div class="weekday-price">
+                                <label>Стоимость за 1 час (₽):</label>
+                                <input type="number" id="partyPrice1Hour">
+                            </div>
+                            <div class="weekend-price">
+                                <label>Выходные (₽):</label>
+                                <input type="number" id="partyPrice1HourWeekend">
+                            </div>
+                        </div>
+                        
+                        <div class="price-comparison">
+                            <div class="weekday-price">
+                                <label>Стоимость за 2 часа (₽):</label>
+                                <input type="number" id="partyPrice2Hours">
+                            </div>
+                            <div class="weekend-price">
+                                <label>Выходные (₽):</label>
+                                <input type="number" id="partyPrice2HoursWeekend">
+                            </div>
+                        </div>
+                    </div>
+                                       
+                    <!-- НАСТРОЙКИ ВЕЧЕРНЕГО РЕЖИМА -->
+                    <div class="form-group">
+                        <h4>Вечерний режим ценообразования</h4>
+                        <div class="evening-pricing-settings">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="eveningWeekendPricingEnabled">
+                                <label for="eveningWeekendPricingEnabled">Включить вечерний режим (цены как в выходные)</label>
+                            </div>
+                            <div>
+                                <label>Время начала вечернего режима:</label>
+                                <select id="eveningWeekendPricingTime">
+                                    <!-- Время будет заполнено JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                            При включенной опции в будние дни, начиная с выбранного времени, цены будут рассчитываться как в выходные дни.
+                            В выходные и праздничные дни цены всегда рассчитываются как в выходные.
+                        </p>
+                    </div>
+                    
+                    <!-- Трудовой календарь -->
+                    <div class="form-group">
+                        <h4>Трудовой календарь (выходные дни)</h4>
+                        <p>Отметьте выходные дни (красным цветом). Кликните на день, чтобы переключить его статус.</p>
+                        <div class="weekend-calendar" id="weekendCalendar">
+                            <!-- Календарь выходных генерируется JS -->
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <button class="btn btn-secondary" onclick="clearWeekendCalendar()">Очистить все отметки</button>
+                            <button class="btn btn-primary" onclick="markWeekends()">Отметить стандартные выходные</button>
+                        </div>
+                    </div>
+                                        
+                    <!-- Экспорт, Импорт, Смена пароля -->
+                    <div class="form-group">
+                        <h4>Управление данными</h4>
+                        <div class="data-management">
+                            <button class="btn btn-primary" onclick="exportDatabase()">Экспорт базы данных</button>
+                            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Импорт базы данных</button>
+                            <button class="btn btn-primary" onclick="openPasswordModal()">Сменить пароль</button>
+                            <input type="file" id="importFile" style="display: none" accept=".json">
+                        </div>
+                    </div>
+                    
+                    <hr style="margin: 20px 0;">
+                    
+                    <h3>Настройки модулей</h3>
+                    <button class="btn btn-success" onclick="saveAllSettings()">Сохранить все настройки</button>
+                </div>
+
+                <!-- Вкладка: Отчеты (Общая) -->
+                <div id="reports" class="tab-content">
+                    <h3>Генерация отчетов</h3>
+                    <div class="report-options">
+                        <div class="report-option">
+                            <div>
+                                <h4>Отчет по клиентам (Общий)</h4>
+                                <p>Полный список клиентов с информацией о заездах по всем модулям</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="generateClientReport()">Скачать CSV</button>
+                        </div>
+                        <div class="report-option">
+                            <div>
+                                <h4>Отчет по бронированиям за период</h4>
+                                <p>Выберите даты для генерации отчета по всем модулям</p>
+                                <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                                    <label for="reportStartDate" style="font-weight: normal;">С:</label>
+                                    <input type="date" id="reportStartDate">
+                                    <label for="reportEndDate" style="font-weight: normal;">По:</label>
+                                    <input type="date" id="reportEndDate">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="generatePeriodReport()">Скачать CSV</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальные окна для Картинга -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <h2>Бронирование (Картинг): <span id="selectedTime"></span></h2>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label>ФИО клиента:</label>
+                    <input type="text" id="clientName" required autocomplete="off">
+                    <div id="clientSuggestions" class="autocomplete-list" style="display: none;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Дата рождения:</label>
+                    <input type="date" id="clientBirthdate">
+                </div>
+                <div class="form-group">
+                    <label>Телефон:</label>
+                    <input type="tel" id="clientPhone">
+                </div>
+                
+                <div class="form-group">
+                    <label>Режим:</label>
+                    <div class="mode-selector">
+                        <div class="mode-option selected" data-mode="regular">Обычный</div>
+                        <div class="mode-option" data-mode="race">Race</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Количество картингов:</label>
+                    <div class="kart-count">
+                        <button type="button">-</button>
+                        <span id="kartsCount">1</span>
+                        <button type="button">+</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Комментарий администратора (сохраняется в профиль):</label>
+                    <textarea id="clientAdminComment" rows="3" placeholder="Введите комментарий..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Скидка (₽):</label>
+                    <input type="number" id="manualDiscount" value="0" min="0">
+                </div>
+                
+                <div class="amount-calculation">
+                    <p>Базовая стоимость: <span id="baseAmount">0</span> ₽</p>
+                    <p>Скидка: <span id="discountAmount">0</span> ₽</p>
+                    <p><strong>Итоговая сумма: <span id="totalAmount">0</span> ₽</strong></p>
+                </div>
+                
+                <h3>Чек-лист</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="checkPayment">
+                        <label for="checkPayment">Оплата получена</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Сумма платежа (₽):</label>
+                    <input type="number" id="paymentAmount" required>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить бронь</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальные окна для Аренды зала -->
+    <div id="partyBookingModal" class="modal">
+        <div class="modal-content">
+            <h2>Бронирование (Аренда зала): <span id="partySelectedTime"></span></h2>
+            <form id="partyBookingForm">
+                <div class="form-group">
+                    <label>ФИО клиента:</label>
+                    <input type="text" id="partyClientName" required autocomplete="off">
+                    <div id="partyClientSuggestions" class="autocomplete-list" style="display: none;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Дата рождения:</label>
+                    <input type="date" id="partyClientBirthdate">
+                </div>
+                <div class="form-group">
+                    <label>Телефон:</label>
+                    <input type="tel" id="partyClientPhone">
+                </div>
+                
+                <div class="form-group">
+                    <label>Длительность сеанса:</label>
+                    <div class="duration-selector">
+                        <div class="duration-option selected" data-duration="60">1 час</div>
+                        <div class="duration-option" data-duration="120">2 часа</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Количество человек:</label>
+                    <div class="people-count">
+                        <button type="button">-</button>
+                        <span id="partyPeopleCount">1</span>
+                        <button type="button">+</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Комментарий администратора (сохраняется в профиль):</label>
+                    <textarea id="partyClientAdminComment" rows="3" placeholder="Введите комментарий..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Скидка (₽):</label>
+                    <input type="number" id="partyManualDiscount" value="0" min="0">
+                </div>
+                
+                <div class="amount-calculation">
+                    <p>Базовая стоимость: <span id="partyBaseAmount">0</span> ₽</p>
+                    <p>Скидка: <span id="partyDiscountAmount">0</span> ₽</p>
+                    <p><strong>Итоговая сумма: <span id="partyTotalAmount">0</span> ₽</strong></p>
+                </div>
+                
+                <h3>Чек-лист</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="partyCheckPayment">
+                        <label for="partyCheckPayment">Оплата получена</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Сумма платежа (₽):</label>
+                    <input type="number" id="partyPaymentAmount" required>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить бронь</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальные окна для Лаундж зоны -->
+    <div id="loungeBookingModal" class="modal">
+        <div class="modal-content">
+            <h2>Бронирование (Лаундж зона): <span id="loungeSelectedTime"></span></h2>
+            <form id="loungeBookingForm">
+                <div class="form-group">
+                    <label>ФИО клиента:</label>
+                    <input type="text" id="loungeClientName" required autocomplete="off">
+                    <div id="loungeClientSuggestions" class="autocomplete-list" style="display: none;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Дата рождения:</label>
+                    <input type="date" id="loungeClientBirthdate">
+                </div>
+                <div class="form-group">
+                    <label>Телефон:</label>
+                    <input type="tel" id="loungeClientPhone">
+                </div>
+                
+                <div class="form-group">
+                    <label>Длительность сеанса:</label>
+                    <div class="duration-selector">
+                        <div class="duration-option selected" data-duration="60">1 час</div>
+                        <div class="duration-option" data-duration="120">2 часа</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Количество человек:</label>
+                    <div class="people-count">
+                        <button type="button">-</button>
+                        <span id="loungePeopleCount">1</span>
+                        <button type="button">+</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Комментарий администратора (сохраняется в профиль):</label>
+                    <textarea id="loungeClientAdminComment" rows="3" placeholder="Введите комментарий..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Скидка (₽):</label>
+                    <input type="number" id="loungeManualDiscount" value="0" min="0">
+                </div>
+                
+                <div class="amount-calculation">
+                    <p>Базовая стоимость: <span id="loungeBaseAmount">0</span> ₽</p>
+                    <p>Скидка: <span id="loungeDiscountAmount">0</span> ₽</p>
+                    <p><strong>Итоговая сумма: <span id="loungeTotalAmount">0</span> ₽</strong></p>
+                </div>
+                
+                <h3>Чек-лист</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="loungeCheckPayment">
+                        <label for="loungeCheckPayment">Оплата получена</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Сумма платежа (₽):</label>
+                    <input type="number" id="loungePaymentAmount" required>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить бронь</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальные окна для Симулятора -->
+    <div id="virtualBookingModal" class="modal">
+        <div class="modal-content">
+            <h2>Бронирование (Симулятор): <span id="virtualSelectedTime"></span></h2>
+            <form id="virtualBookingForm">
+                <div class="form-group">
+                    <label>ФИО клиента:</label>
+                    <input type="text" id="virtualClientName" required autocomplete="off">
+                    <div id="virtualClientSuggestions" class="autocomplete-list" style="display: none;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Дата рождения:</label>
+                    <input type="date" id="virtualClientBirthdate">
+                </div>
+                <div class="form-group">
+                    <label>Телефон:</label>
+                    <input type="tel" id="virtualClientPhone">
+                </div>
+                
+                <div class="form-group">
+                    <label>Длительность сеанса:</label>
+                    <div class="duration-selector" id="virtualDurationSelector">
+                        <div class="duration-option selected" data-duration="15">15 мин</div>
+                        <div class="duration-option" data-duration="30">30 мин</div>
+                        <div class="duration-option" data-duration="45">45 мин</div>
+                        <div class="duration-option" data-duration="60">60 мин</div>
+                        <div class="duration-option" data-duration="75">75 мин</div>
+                        <div class="duration-option" data-duration="90">90 мин</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Количество симуляторов:</label>
+                    <div class="kart-count">
+                        <button type="button">-</button>
+                        <span id="virtualSimulatorsCount">1</span>
+                        <button type="button">+</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Комментарий администратора (сохраняется в профиль):</label>
+                    <textarea id="virtualClientAdminComment" rows="3" placeholder="Введите комментарий..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Скидка (₽):</label>
+                    <input type="number" id="virtualManualDiscount" value="0" min="0">
+                </div>
+                
+                <div class="amount-calculation">
+                    <p>Базовая стоимость: <span id="virtualBaseAmount">0</span> ₽</p>
+                    <p>Скидка: <span id="virtualDiscountAmount">0</span> ₽</p>
+                    <p><strong>Итоговая сумма: <span id="virtualTotalAmount">0</span> ₽</strong></p>
+                </div>
+                
+                <h3>Чек-лист</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="virtualCheckPayment">
+                        <label for="virtualCheckPayment">Оплата получена</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Сумма платежа (₽):</label>
+                    <input type="number" id="virtualPaymentAmount" required>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить бронь</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Общие модальные окна -->
+    <div id="viewBookingModal" class="modal">
+        <div class="modal-content">
+            <h2>Информация о бронировании (<span id="viewBookingType"></span>)</h2>
+            <div id="bookingDetails"></div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary">Закрыть</button>
+                <button type="button" class="btn btn-primary">Редактировать</button>
+                <button type="button" class="btn" style="background: #e74c3c; color: white;">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="slotBookingsModal" class="modal">
+        <div class="modal-content">
+            <h2>Брони на <span id="slotModalTime"></span> (<span id="slotModalType"></span>)</h2>
+            <div id="slotBookingsList"></div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary">Закрыть</button>
+                <button type="button" class="btn btn-primary" id="addBookingToSlotBtn">Добавить бронь</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editClientModal" class="modal">
+        <div class="modal-content">
+            <h2>Редактирование клиента</h2>
+            <form id="editClientForm">
+                <input type="hidden" id="editClientId">
+                <div class="form-group">
+                    <label>ФИО клиента:</label>
+                    <input type="text" id="editClientName" required>
+                </div>
+                <div class="form-group">
+                    <label>Дата рождения:</label>
+                    <input type="date" id="editClientBirthdate">
+                </div>
+                <div class="form-group">
+                    <label>Телефон:</label>
+                    <input type="tel" id="editClientPhone">
+                </div>
+                <div class="form-group">
+                    <label>Комментарий администратора:</label>
+                    <textarea id="editClientComment" rows="3"></textarea>
+                </div>
+                <div class="client-info">
+                    <div>
+                        <p><strong>Количество броней (всего):</strong> <span id="editClientBookings">0</span></p>
+                        <p><strong>Дата первого визита:</strong> <span id="editClientFirstBooking">-</span></p>
+                    </div>
+                    <div>
+                        <p><strong>Дата последнего визита:</strong> <span id="editClientLastBooking">-</span></p>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="passwordModal" class="modal password-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Смена пароля администратора</h2>
+            
+            <div class="form-group">
+                <label>Старый пароль:</label>
+                <input type="password" id="oldPassword" placeholder="Введите старый пароль">
+            </div>
+            
+            <div class="form-group">
+                <label>Новый пароль:</label>
+                <input type="password" id="newPassword" placeholder="Введите новый пароль">
+            </div>
+            
+            <div class="form-group">
+                <label>Подтвердите новый пароль:</label>
+                <input type="password" id="confirmPassword" placeholder="Повторите новый пароль">
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-primary">Сменить пароль</button>
+                <button class="btn btn-secondary">Отмена</button>
+            </div>
+            
+            <div id="passwordMessage" style="margin-top: 10px; color: red;"></div>
+        </div>
+    </div>
+
+    <!-- Подключение JavaScript файлов -->
+    <script src="js/utils.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/clients.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/modules/karting-module.js"></script>
+    <script src="js/modules/party-module.js"></script>
+    <script src="js/modules/lounge-module.js"></script>
+    <script src="js/modules/virtual-module.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
