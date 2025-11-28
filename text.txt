@@ -1,0 +1,21 @@
+modular-booking-system/
+│
+├── index.html
+├── css/
+│   ├── base.css
+│   ├── layout.css
+│   ├── components.css
+│   └── modules.css
+└── js/
+    ├── main.js
+    ├── database.js
+    ├── auth.js
+    ├── calendar.js
+    ├── clients.js
+    ├── reports.js
+    ├── utils.js
+    └── modules/
+        ├── karting-module.js
+        ├── party-module.js
+        ├── lounge-module.js
+        └── virtual-module.js
